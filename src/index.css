@@ -1,0 +1,327 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Ivy Mode";
+  src: local("Ivy Mode"), local("IvyMode"), local("IvyMode Regular"),
+       url("/fonts/ivy-mode/IvyMode-Regular.woff2") format("woff2"),
+       url("/fonts/ivy-mode/IvyMode-Regular.woff") format("woff");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Ivy Mode";
+  src: local("Ivy Mode Italic"), local("IvyMode-Italic"), local("IvyMode Italic"),
+       url("/fonts/ivy-mode/IvyMode-Italic.woff2") format("woff2"),
+       url("/fonts/ivy-mode/IvyMode-Italic.woff") format("woff");
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Ivy Mode";
+  src: local("Ivy Mode Semibold"), local("IvyMode-Semibold"),
+       url("/fonts/ivy-mode/IvyMode-Semibold.woff2") format("woff2"),
+       url("/fonts/ivy-mode/IvyMode-Semibold.woff") format("woff");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Encode Sans Condensed";
+  src: local("Encode Sans Condensed"), local("EncodeSansCondensed-Regular"),
+       url("/fonts/Encode_Sans_Condensed/EncodeSansCondensed-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Encode Sans Condensed";
+  src: local("Encode Sans Condensed Medium"), local("EncodeSansCondensed-Medium"),
+       url("/fonts/Encode_Sans_Condensed/EncodeSansCondensed-Medium.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Encode Sans Condensed";
+  src: local("Encode Sans Condensed Semibold"), local("EncodeSansCondensed-SemiBold"),
+       url("/fonts/Encode_Sans_Condensed/EncodeSansCondensed-SemiBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --font-body: "Encode Sans Condensed", ui-sans-serif, system-ui, sans-serif;
+    --font-heading: "Ivy Mode", "IvyMode", "Playfair Display", ui-serif, Georgia, serif;
+
+    --background: 0 0% 100%;
+    --foreground: 0 0% 8%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 8%;
+
+    --primary: 0 0% 8%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 40 10% 96%;
+    --secondary-foreground: 0 0% 8%;
+
+    --muted: 40 10% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 40 10% 96%;
+    --accent-foreground: 0 0% 8%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 8%;
+
+    --radius: 0.5rem;
+
+    --section-dark: 0 0% 8%;
+    --section-dark-foreground: 0 0% 95%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 8%;
+    --sidebar-primary: 0 0% 8%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 40 10% 96%;
+    --sidebar-accent-foreground: 0 0% 8%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 0 0% 8%;
+
+    --chart-1: 30 80% 55%;
+    --chart-2: 200 60% 50%;
+    --chart-3: 150 50% 45%;
+    --chart-4: 280 60% 55%;
+    --chart-5: 350 70% 55%;
+  }
+
+  .dark {
+    --background: 0 0% 6%;
+    --foreground: 0 0% 95%;
+
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 0 0% 95%;
+    --primary-foreground: 0 0% 8%;
+
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 95%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 95%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 0% 80%;
+
+    --section-dark: 0 0% 95%;
+    --section-dark-foreground: 0 0% 8%;
+
+    --sidebar-background: 0 0% 8%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 0 0% 95%;
+    --sidebar-primary-foreground: 0 0% 8%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 0 0% 80%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.6;
+    font-synthesis-weight: none;
+    font-synthesis-style: none;
+  }
+
+  a,
+  button,
+  [role="button"],
+  input,
+  textarea,
+  select {
+    transition: color 220ms ease, background-color 220ms ease, border-color 220ms ease, transform 260ms ease, box-shadow 260ms ease, opacity 220ms ease;
+  }
+
+  button:not(.no-lift):hover,
+  [role="button"]:not(.no-lift):hover {
+    transform: translateY(-1px);
+  }
+
+  img {
+    transition: transform 420ms ease, filter 320ms ease, opacity 240ms ease;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    line-height: 1.1;
+    font-synthesis-weight: none;
+    font-synthesis-style: none;
+  }
+
+  h1:not([class*="text-"]):not(.page-title) {
+    font-size: clamp(3rem, 5.5vw, 74px);
+    font-weight: 600;
+  }
+
+  h2:not([class*="text-"]) {
+    font-size: clamp(2.3rem, 4.1vw, 54px);
+    font-weight: 600;
+  }
+
+  h3:not([class*="text-"]) {
+    font-size: clamp(1.45rem, 2.2vw, 24px);
+    font-weight: 600;
+  }
+}
+
+@layer components {
+  .animate-page-in {
+    animation: page-in 560ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .page-title {
+    font-size: min(54px, 12vw) !important;
+    line-height: 1.05;
+  }
+
+  .section-space {
+    padding-top: clamp(5rem, 8vw, 7rem);
+    padding-bottom: clamp(5rem, 8vw, 7rem);
+    min-height: clamp(620px, 78vh, 840px);
+  }
+
+  .section-dark {
+    background-color: hsl(var(--section-dark));
+    color: hsl(var(--section-dark-foreground));
+  }
+
+  .section-dark .btn-outline-inverse {
+    border-color: hsl(var(--section-dark-foreground));
+    color: hsl(var(--section-dark-foreground));
+  }
+
+  .section-dark .btn-outline-inverse:hover {
+    background-color: hsl(var(--section-dark-foreground));
+    color: hsl(var(--section-dark));
+  }
+
+  .vertical-story-slider {
+    -webkit-appearance: slider-vertical;
+    appearance: none;
+    width: 10px;
+    height: 220px;
+    cursor: pointer;
+    border-radius: 9999px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.28), rgba(255,255,255,0.12));
+  }
+
+  .vertical-story-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 28px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255,255,255,0.65);
+    background: rgba(255,255,255,0.92);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.32);
+  }
+
+  .vertical-story-slider::-moz-range-track {
+    width: 10px;
+    border-radius: 9999px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.28), rgba(255,255,255,0.12));
+  }
+
+  .vertical-story-slider::-moz-range-thumb {
+    width: 14px;
+    height: 28px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255,255,255,0.65);
+    background: rgba(255,255,255,0.92);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.32);
+  }
+
+  .animate-news-feature {
+    animation: news-feature-in 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .animate-news-item {
+    animation: news-item-in 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes page-in {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.995);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes news-feature-in {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+    filter: blur(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes news-item-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

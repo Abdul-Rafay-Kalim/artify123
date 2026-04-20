@@ -1,0 +1,12 @@
+<svg width="132" height="36" viewBox="0 0 132 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="1" y="1" width="34" height="34" rx="17" stroke="white" stroke-width="2"/>
+  <path d="M11 25L18 11L25 25" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13.8 20.2H22.2" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M47 10H55.5V12.8H50.1V16.3H55.1V19.1H50.1V25H47V10Z" fill="white"/>
+  <path d="M58.2 25V10H61.3V25H58.2Z" fill="white"/>
+  <path d="M64.9 10H68.1L71.1 16.1L74.2 10H77.4L72.6 18.9V25H69.5V18.9L64.9 10Z" fill="white"/>
+  <path d="M81.2 25V19.4L76.3 10H79.8L82.8 16.3L85.9 10H89.4L84.4 19.4V25H81.2Z" fill="white"/>
+  <path d="M92.4 10H101.8V12.8H95.5V16H101.4V18.8H95.5V22.2H102V25H92.4V10Z" fill="white"/>
+  <path d="M104.8 10H108.7C112.6 10 115.2 12.5 115.2 17.5C115.2 22.5 112.6 25 108.7 25H104.8V10ZM108.6 22.2C110.8 22.2 112 20.8 112 17.5C112 14.2 110.8 12.8 108.6 12.8H107.9V22.2H108.6Z" fill="white"/>
+  <path d="M117.8 10H121.7C125.1 10 127.3 11.8 127.3 14.8C127.3 16.8 126.1 18.2 124.2 18.9L127.8 25H124.2L121 19.4H120.9V25H117.8V10ZM121.5 16.8C123.3 16.8 124.1 16 124.1 14.8C124.1 13.5 123.3 12.8 121.5 12.8H120.9V16.8H121.5Z" fill="white"/>
+</svg>

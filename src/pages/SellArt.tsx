@@ -96,6 +96,14 @@ const SellArt = () => {
     }
   }, [user]);
 
+  // Ensure user metadata (role) is fresh — refresh session once on mount
+  useEffect(() => {
+    if (user) {
+      supabase.auth.refreshSession().catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
+
   const fileToDataUrl = (file: File) =>
     new Promise<string>((resolve, reject) => {
       const reader = new FileReader();

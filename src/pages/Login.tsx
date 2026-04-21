@@ -98,6 +98,7 @@ const Login = () => {
           });
 
           if (roleUpdateError) throw roleUpdateError;
+          await supabase.auth.refreshSession();
         }
 
         if (!rememberMe) {

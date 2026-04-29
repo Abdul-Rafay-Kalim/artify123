@@ -9,6 +9,8 @@ import {
   Tag,
   FileText,
   Home,
+  Sparkles,
+  Briefcase,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +18,7 @@ import { useAdmin } from "@/contexts/AdminContext";
 import { useInventory } from "@/contexts/InventoryContext";
 import { useToast } from "@/hooks/use-toast";
 import { artworks as staticArtworks } from "@/data/artworks";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Art {
   id: string;
@@ -56,7 +59,7 @@ const AdminDashboard = () => {
   const { toast } = useToast();
 
   const [activeTab, setActiveTab] = useState<
-    "art" | "news" | "deals" | "images" | "payments" | "settings"
+    "art" | "news" | "deals" | "images" | "payments" | "featured" | "settings"
   >("art");
 
   // Art management

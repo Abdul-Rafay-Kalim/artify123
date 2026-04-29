@@ -132,8 +132,20 @@ const SellArt = () => {
     if (user) {
       fetchArtistProfile();
       fetchMyListings();
+      fetchMyServices();
     }
   }, [user]);
+
+  // Scroll to service form when ?tab=service is in URL
+  useEffect(() => {
+    if (showServiceFormHint) {
+      setTimeout(() => {
+        document
+          .getElementById("service-form")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 300);
+    }
+  }, [showServiceFormHint]);
 
   // Ensure user metadata (role) is fresh — refresh session once on mount
   useEffect(() => {

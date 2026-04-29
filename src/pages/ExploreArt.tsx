@@ -127,6 +127,9 @@ const ExploreArt = () => {
     else if (sortBy === "price-high") result.sort((a, b) => b.price - a.price);
     else {
       result.sort((a, b) => {
+        const af = a.isFeatured ? 1 : 0;
+        const bf = b.isFeatured ? 1 : 0;
+        if (af !== bf) return bf - af;
         const aTime = a.createdAt ? new Date(a.createdAt).getTime() : new Date(a.year, 0, 1).getTime();
         const bTime = b.createdAt ? new Date(b.createdAt).getTime() : new Date(b.year, 0, 1).getTime();
         return bTime - aTime;

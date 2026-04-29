@@ -914,31 +914,229 @@ const SellArt = () => {
             <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0.5s" }}>
               <h2 className="text-2xl font-serif font-bold text-foreground mb-6">My Listings</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {myListings.map((art) => (
-                  <div key={art.id} className="border border-border rounded-xl p-4 bg-card">
-                    {art.image_url && (
-                      <div className="aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-secondary">
-                        <img src={art.image_url} alt={art.title} className="w-full h-full object-cover" />
+                {myListings.map((art) => {
+                  const isFeatured =
+                    art.is_featured &&
+                    art.featured_until &&
+                    new Date(art.featured_until) > new Date();
+                  return (
+                    <div key={art.id} className="relative border border-border rounded-xl p-4 bg-card">
+                      {art.image_url && (
+                        <div className="relative aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-secondary">
+                          <img src={art.image_url} alt={art.title} className="w-full h-full object-cover" />
+                          {isFeatured && (
+                            <div className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground shadow">
+                              <Sparkles className="w-3 h-3" /> Featured
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <h3 className="font-serif font-semibold text-foreground truncate">{art.title}</h3>
+                      <p className="text-sm text-muted-foreground">{art.artist_name}</p>
+                      {isFeatured && (
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
+                          Featured until {new Date(art.featured_until!).toLocaleDateString()}
+                        </p>
+                      )}
+                      <div className="mt-3 flex items-center justify-between gap-2">
+                        <span className="font-medium text-foreground">PKR {Number(art.price).toLocaleString()}</span>
+                        <div className="flex items-center gap-1">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => startEditingArtwork(art)} aria-label="Edit artwork">
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteArtwork(art.id)} aria-label="Delete artwork">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
-                    )}
-                    <h3 className="font-serif font-semibold text-foreground truncate">{art.title}</h3>
-                    <p className="text-sm text-muted-foreground">{art.artist_name}</p>
-                    <div className="mt-3 flex items-center justify-between gap-2">
-                      <span className="font-medium text-foreground">PKR {Number(art.price).toLocaleString()}</span>
-                      <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => startEditingArtwork(art)} aria-label="Edit artwork">
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteArtwork(art.id)} aria-label="Delete artwork">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                      <div className="mt-3">
+                        <BoostFeaturedDialog
+                          recordId={art.id}
+                          table="listed_artworks"
+                          itemTitle={art.title}
+                          isAlreadyFeatured={art.is_featured}
+                          featuredUntil={art.featured_until || null}
+                          onBoosted={fetchMyListings}
+                          trigger={
+                            <Button size="sm" variant={isFeatured ? "outline" : "default"} className="w-full gap-1.5">
+                              <Sparkles className="w-3.5 h-3.5" />
+                              {isFeatured ? "Extend Boost" : "Boost to Featured"}
+                            </Button>
+                          }
+                        />
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
+
+          {/* ============ Services Section ============ */}
+          <div id="service-form" className="mt-16">
+            <Separator className="mb-10" />
+            <Card className="opacity-0 animate-fade-in" style={{ animationDelay: "0.55s" }}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-serif">
+                  <Briefcase className="w-5 h-5" />
+                  {editingServiceId ? "Edit Service" : "Offer a Service"}
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Sell custom art services like portraits, logos or commissions.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={submitService} className="space-y-5">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="svc-title">Title *</Label>
+                      <Input
+                        id="svc-title"
+                        value={serviceTitle}
+                        onChange={(e) => setServiceTitle(e.target.value)}
+                        placeholder="I will paint a custom watercolor portrait"
+                        disabled={!isSeller}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="svc-cat">Category</Label>
+                      <select
+                        id="svc-cat"
+                        value={serviceCategory}
+                        onChange={(e) => setServiceCategory(e.target.value)}
+                        disabled={!isSeller}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                      >
+                        <option value="">Select category</option>
+                        {SERVICE_CATEGORIES.map((c) => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="svc-delivery">Delivery (days) *</Label>
+                      <Input
+                        id="svc-delivery"
+                        type="number"
+                        min="1"
+                        value={serviceDeliveryDays}
+                        onChange={(e) => setServiceDeliveryDays(e.target.value)}
+                        disabled={!isSeller}
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="svc-price">Starting price (PKR) *</Label>
+                      <Input
+                        id="svc-price"
+                        type="number"
+                        min="0"
+                        value={servicePrice}
+                        onChange={(e) => setServicePrice(e.target.value)}
+                        placeholder="3500"
+                        disabled={!isSeller}
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="svc-desc">Description</Label>
+                      <Textarea
+                        id="svc-desc"
+                        value={serviceDescription}
+                        onChange={(e) => setServiceDescription(e.target.value)}
+                        rows={4}
+                        placeholder="What's included, how it works, what the buyer needs to provide..."
+                        disabled={!isSeller}
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="svc-img">Cover image</Label>
+                      <Input
+                        id="svc-img"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleServiceImageUpload}
+                        disabled={!isSeller}
+                      />
+                      {serviceImageUrl && (
+                        <div className="aspect-[4/3] w-full max-w-xs rounded-lg overflow-hidden bg-secondary mt-2">
+                          <img src={serviceImageUrl} alt="Cover" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button type="submit" disabled={submittingService || !isSeller}>
+                      {submittingService && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                      {editingServiceId ? "Save Changes" : "Publish Service"}
+                    </Button>
+                    {editingServiceId && (
+                      <Button type="button" variant="outline" onClick={resetServiceForm} disabled={submittingService}>
+                        Cancel Editing
+                      </Button>
+                    )}
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+
+            {myServices.length > 0 && (
+              <div className="mt-10 opacity-0 animate-fade-in" style={{ animationDelay: "0.6s" }}>
+                <h2 className="text-2xl font-serif font-bold text-foreground mb-6">My Services</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {myServices.map((s) => {
+                    const isFeatured =
+                      s.is_featured &&
+                      s.featured_until &&
+                      new Date(s.featured_until) > new Date();
+                    return (
+                      <div key={s.id} className="border border-border rounded-xl p-4 bg-card">
+                        {s.image_url && (
+                          <div className="relative aspect-[4/3] rounded-lg overflow-hidden mb-3 bg-secondary">
+                            <img src={s.image_url} alt={s.title} className="w-full h-full object-cover" />
+                            {isFeatured && (
+                              <div className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground shadow">
+                                <Sparkles className="w-3 h-3" /> Featured
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        <h3 className="font-serif font-semibold text-foreground line-clamp-2">{s.title}</h3>
+                        <p className="text-xs text-muted-foreground mt-0.5 inline-flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> {s.delivery_days}d · {s.category || "Service"}
+                        </p>
+                        <div className="mt-3 flex items-center justify-between gap-2">
+                          <span className="font-medium text-foreground">PKR {Number(s.price).toLocaleString()}</span>
+                          <div className="flex items-center gap-1">
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => startEditingService(s)} aria-label="Edit service">
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteService(s.id)} aria-label="Delete service">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="mt-3">
+                          <BoostFeaturedDialog
+                            recordId={s.id}
+                            table="services"
+                            itemTitle={s.title}
+                            isAlreadyFeatured={s.is_featured}
+                            featuredUntil={s.featured_until}
+                            onBoosted={fetchMyServices}
+                            trigger={
+                              <Button size="sm" variant={isFeatured ? "outline" : "default"} className="w-full gap-1.5">
+                                <Sparkles className="w-3.5 h-3.5" />
+                                {isFeatured ? "Extend Boost" : "Boost to Featured"}
+                              </Button>
+                            }
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </main>
       <Footer />

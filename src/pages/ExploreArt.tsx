@@ -266,6 +266,11 @@ const ExploreArt = () => {
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-muted-foreground">No Image</div>
                           )}
+                          {art.isFeatured && (
+                            <div className="absolute right-3 bottom-3 z-10 inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground shadow-md">
+                              <Sparkles className="w-3 h-3" /> Featured
+                            </div>
+                          )}
                           <button
                             type="button"
                             onClick={(e) => {

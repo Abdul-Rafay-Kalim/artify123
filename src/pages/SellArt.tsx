@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Upload, Sparkles, Loader2, Trash2, Palette, Info, Pencil } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Upload, Sparkles, Loader2, Trash2, Palette, Info, Pencil, Briefcase, Clock } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import BoostFeaturedDialog from "@/components/BoostFeaturedDialog";
 
 interface ArtistProfileData {
   id: string;
@@ -34,7 +35,32 @@ interface ListedArtwork {
   description: string | null;
   year: number | null;
   dimensions: string | null;
+  is_featured?: boolean;
+  featured_until?: string | null;
 }
+
+interface ListedService {
+  id: string;
+  seller_id: string;
+  title: string;
+  description: string | null;
+  category: string | null;
+  price: number;
+  delivery_days: number;
+  image_url: string | null;
+  is_featured: boolean;
+  featured_until: string | null;
+}
+
+const SERVICE_CATEGORIES = [
+  "Logo Design",
+  "Portraits",
+  "Wall Art",
+  "UI/UX Design",
+  "Illustration",
+  "Calligraphy",
+  "Other",
+];
 
 type ListingArtistMode = "self" | "other";
 

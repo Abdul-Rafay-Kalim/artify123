@@ -109,6 +109,19 @@ const SellArt = () => {
   // My listings
   const [myListings, setMyListings] = useState<ListedArtwork[]>([]);
 
+  // Services state
+  const [searchParams] = useSearchParams();
+  const [serviceTitle, setServiceTitle] = useState("");
+  const [serviceDescription, setServiceDescription] = useState("");
+  const [serviceCategory, setServiceCategory] = useState("");
+  const [servicePrice, setServicePrice] = useState("");
+  const [serviceDeliveryDays, setServiceDeliveryDays] = useState("7");
+  const [serviceImageUrl, setServiceImageUrl] = useState("");
+  const [submittingService, setSubmittingService] = useState(false);
+  const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
+  const [myServices, setMyServices] = useState<ListedService[]>([]);
+  const showServiceFormHint = searchParams.get("tab") === "service";
+
   useEffect(() => {
     if (!authLoading && !user) {
       navigate("/login");

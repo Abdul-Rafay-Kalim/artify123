@@ -501,6 +501,135 @@ const SellArt = () => {
     }
   };
 
+  // ======== Services handlers ========
+
+  const fetchMyServices = async () => {
+    if (!user) return;
+    const { data } = await (supabase as any)
+      .from("services")
+      .select("*")
+      .eq("seller_id", user.id)
+      .order("created_at", { ascending: false });
+    setMyServices((data as ListedService[]) || []);
+  };
+
+  const resetServiceForm = () => {
+    setServiceTitle("");
+    setServiceDescription("");
+    setServiceCategory("");
+    setServicePrice("");
+    setServiceDeliveryDays("7");
+    setServiceImageUrl("");
+    setEditingServiceId(null);
+  };
+
+  const handleServiceImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const dataUrl = await fileToDataUrl(file);
+      setServiceImageUrl(dataUrl);
+    } catch (err: any) {
+      toast({
+        title: "Failed to load image",
+        description: err.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const startEditingService = (s: ListedService) => {
+    setEditingServiceId(s.id);
+    setServiceTitle(s.title);
+    setServiceDescription(s.description || "");
+    setServiceCategory(s.category || "");
+    setServicePrice(String(s.price));
+    setServiceDeliveryDays(String(s.delivery_days));
+    setServiceImageUrl(s.image_url || "");
+    document
+      .getElementById("service-form")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const submitService = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !isSeller) {
+      toast({
+        title: "Seller account required",
+        description: "Switch to a seller account to offer services.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!serviceTitle.trim() || !servicePrice || !serviceDeliveryDays) {
+      toast({
+        title: "Missing fields",
+        description: "Title, price and delivery time are required.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSubmittingService(true);
+    try {
+      const payload = {
+        seller_id: user.id,
+        artist_name:
+          artistName ||
+          [user.user_metadata?.first_name, user.user_metadata?.last_name]
+            .filter(Boolean)
+            .join(" ") ||
+          "Artist",
+        title: serviceTitle.trim(),
+        description: serviceDescription || null,
+        category: serviceCategory || null,
+        price: parseFloat(servicePrice),
+        delivery_days: parseInt(serviceDeliveryDays, 10) || 7,
+        image_url: serviceImageUrl || null,
+      };
+
+      const query = editingServiceId
+        ? (supabase as any)
+            .from("services")
+            .update(payload)
+            .eq("id", editingServiceId)
+        : (supabase as any).from("services").insert(payload);
+
+      const { error } = await query;
+      if (error) throw error;
+
+      toast({
+        title: editingServiceId ? "Service updated!" : "Service published!",
+        description: editingServiceId
+          ? "Your changes are now live."
+          : "It's now visible on the Services page.",
+      });
+      resetServiceForm();
+      await fetchMyServices();
+    } catch (err: any) {
+      toast({
+        title: "Error saving service",
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setSubmittingService(false);
+    }
+  };
+
+  const deleteService = async (id: string) => {
+    const { error } = await (supabase as any)
+      .from("services")
+      .delete()
+      .eq("id", id);
+    if (!error) {
+      setMyServices((prev) => prev.filter((s) => s.id !== id));
+      toast({ title: "Service removed" });
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">

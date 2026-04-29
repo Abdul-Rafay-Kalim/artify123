@@ -9,6 +9,8 @@ import {
   Tag,
   FileText,
   Home,
+  Sparkles,
+  Briefcase,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +18,7 @@ import { useAdmin } from "@/contexts/AdminContext";
 import { useInventory } from "@/contexts/InventoryContext";
 import { useToast } from "@/hooks/use-toast";
 import { artworks as staticArtworks } from "@/data/artworks";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Art {
   id: string;
@@ -56,12 +59,74 @@ const AdminDashboard = () => {
   const { toast } = useToast();
 
   const [activeTab, setActiveTab] = useState<
-    "art" | "news" | "deals" | "images" | "payments" | "settings"
+    "art" | "news" | "deals" | "images" | "payments" | "featured" | "settings"
   >("art");
 
   // Art management
   const [artList, setArtList] = useState<Art[]>([]);
   const [newArt, setNewArt] = useState({ title: "", artist: "", price: "" });
+
+  // Featured management
+  const [featuredListings, setFeaturedListings] = useState<any[]>([]);
+  const [featuredServices, setFeaturedServices] = useState<any[]>([]);
+
+  const fetchFeaturedData = async () => {
+    const [{ data: a }, { data: s }] = await Promise.all([
+      (supabase as any)
+        .from("listed_artworks")
+        .select("id,title,artist_name,price,image_url,is_featured,featured_until,created_at")
+        .order("is_featured", { ascending: false })
+        .order("created_at", { ascending: false }),
+      (supabase as any)
+        .from("services")
+        .select("id,title,artist_name,price,image_url,is_featured,featured_until,delivery_days,created_at")
+        .order("is_featured", { ascending: false })
+        .order("created_at", { ascending: false }),
+    ]);
+    setFeaturedListings((a as any[]) || []);
+    setFeaturedServices((s as any[]) || []);
+  };
+
+  useEffect(() => {
+    if (activeTab === "featured") fetchFeaturedData();
+  }, [activeTab]);
+
+  const toggleFeatured = async (
+    table: "listed_artworks" | "services",
+    row: any
+  ) => {
+    const isCurrentlyActive =
+      row.is_featured &&
+      row.featured_until &&
+      new Date(row.featured_until) > new Date();
+
+    const update = isCurrentlyActive
+      ? { is_featured: false, featured_until: null }
+      : {
+          is_featured: true,
+          featured_until: new Date(
+            Date.now() + 7 * 24 * 60 * 60 * 1000
+          ).toISOString(),
+        };
+
+    const { error } = await (supabase as any)
+      .from(table)
+      .update(update)
+      .eq("id", row.id);
+
+    if (error) {
+      toast({
+        title: "Update failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+    toast({
+      title: isCurrentlyActive ? "Featured removed" : "Marked as featured (7 days)",
+    });
+    fetchFeaturedData();
+  };
 
   // News management
   const [newsList, setNewsList] = useState<News[]>([]);
@@ -333,13 +398,21 @@ const AdminDashboard = () => {
               { id: "deals", label: "Deals & Discounts", icon: Tag },
               { id: "images", label: "Hero Images", icon: Image },
               { id: "payments", label: "Payments", icon: Tag },
+              { id: "featured", label: "Featured Listings", icon: Sparkles },
               { id: "settings", label: "Settings", icon: Settings },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() =>
                   setActiveTab(
-                    tab.id as "art" | "news" | "deals" | "images" | "payments" | "settings"
+                    tab.id as
+                      | "art"
+                      | "news"
+                      | "deals"
+                      | "images"
+                      | "payments"
+                      | "featured"
+                      | "settings"
                   )
                 }
                 className={`px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
@@ -833,6 +906,142 @@ const AdminDashboard = () => {
                   );
                 })}
               </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "featured" && (
+          <div className="space-y-8">
+            <div className="bg-white rounded-lg p-6 border">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-serif font-bold flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-orange-500" />
+                  Featured Artworks
+                </h2>
+                <span className="text-sm text-gray-500">
+                  {featuredListings.filter((r) => r.is_featured && r.featured_until && new Date(r.featured_until) > new Date()).length} active
+                </span>
+              </div>
+              {featuredListings.length === 0 ? (
+                <p className="text-sm text-gray-500 py-6 text-center">No artwork listings yet.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="text-left text-gray-500 border-b">
+                      <tr>
+                        <th className="py-2 pr-4">Item</th>
+                        <th className="py-2 pr-4">Artist</th>
+                        <th className="py-2 pr-4">Price</th>
+                        <th className="py-2 pr-4">Status</th>
+                        <th className="py-2 pr-4">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {featuredListings.map((row) => {
+                        const active = row.is_featured && row.featured_until && new Date(row.featured_until) > new Date();
+                        return (
+                          <tr key={row.id} className="border-b last:border-0">
+                            <td className="py-3 pr-4">
+                              <div className="flex items-center gap-3">
+                                {row.image_url && (
+                                  <img src={row.image_url} alt={row.title} className="w-12 h-12 rounded object-cover" />
+                                )}
+                                <span className="font-medium">{row.title}</span>
+                              </div>
+                            </td>
+                            <td className="py-3 pr-4 text-gray-600">{row.artist_name}</td>
+                            <td className="py-3 pr-4">PKR {Number(row.price).toLocaleString()}</td>
+                            <td className="py-3 pr-4">
+                              {active ? (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 text-orange-700 px-2 py-0.5 text-xs font-medium">
+                                  <Sparkles className="w-3 h-3" /> Featured · until {new Date(row.featured_until).toLocaleDateString()}
+                                </span>
+                              ) : (
+                                <span className="text-gray-400 text-xs">Standard</span>
+                              )}
+                            </td>
+                            <td className="py-3 pr-4">
+                              <Button
+                                size="sm"
+                                variant={active ? "outline" : "default"}
+                                onClick={() => toggleFeatured("listed_artworks", row)}
+                              >
+                                {active ? "Unfeature" : "Feature 7d"}
+                              </Button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-white rounded-lg p-6 border">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-serif font-bold flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-orange-500" />
+                  Featured Services
+                </h2>
+                <span className="text-sm text-gray-500">
+                  {featuredServices.filter((r) => r.is_featured && r.featured_until && new Date(r.featured_until) > new Date()).length} active
+                </span>
+              </div>
+              {featuredServices.length === 0 ? (
+                <p className="text-sm text-gray-500 py-6 text-center">No services yet.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="text-left text-gray-500 border-b">
+                      <tr>
+                        <th className="py-2 pr-4">Service</th>
+                        <th className="py-2 pr-4">Artist</th>
+                        <th className="py-2 pr-4">Price</th>
+                        <th className="py-2 pr-4">Status</th>
+                        <th className="py-2 pr-4">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {featuredServices.map((row) => {
+                        const active = row.is_featured && row.featured_until && new Date(row.featured_until) > new Date();
+                        return (
+                          <tr key={row.id} className="border-b last:border-0">
+                            <td className="py-3 pr-4">
+                              <div className="flex items-center gap-3">
+                                {row.image_url && (
+                                  <img src={row.image_url} alt={row.title} className="w-12 h-12 rounded object-cover" />
+                                )}
+                                <span className="font-medium">{row.title}</span>
+                              </div>
+                            </td>
+                            <td className="py-3 pr-4 text-gray-600">{row.artist_name}</td>
+                            <td className="py-3 pr-4">PKR {Number(row.price).toLocaleString()}</td>
+                            <td className="py-3 pr-4">
+                              {active ? (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 text-orange-700 px-2 py-0.5 text-xs font-medium">
+                                  <Sparkles className="w-3 h-3" /> Featured · until {new Date(row.featured_until).toLocaleDateString()}
+                                </span>
+                              ) : (
+                                <span className="text-gray-400 text-xs">Standard</span>
+                              )}
+                            </td>
+                            <td className="py-3 pr-4">
+                              <Button
+                                size="sm"
+                                variant={active ? "outline" : "default"}
+                                onClick={() => toggleFeatured("services", row)}
+                              >
+                                {active ? "Unfeature" : "Feature 7d"}
+                              </Button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         )}

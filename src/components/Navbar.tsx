@@ -82,6 +82,7 @@ const Navbar = () => {
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-background/70">
               <Link to="/" className="hover:text-background transition-colors duration-200">Home</Link>
               <Link to="/explore" className="hover:text-background transition-colors duration-200">Explore</Link>
+              <Link to="/services" className="hover:text-background transition-colors duration-200">Services</Link>
               <Link to="/ai-curator" className="hover:text-background transition-colors duration-200">AI Curator</Link>
               <Link to="/art-quiz" className="hover:text-background transition-colors duration-200">Art Quiz</Link>
               <Link to="/artists" className="hover:text-background transition-colors duration-200">Artists</Link>
@@ -187,6 +188,7 @@ const Navbar = () => {
             <nav className="md:hidden border-t border-background/10 px-6 py-4 flex flex-col gap-2 text-sm font-medium animate-fade-in">
               <Link to="/" className="py-2 text-background/80 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Home</Link>
               <Link to="/explore" className="py-2 text-background/80 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Explore</Link>
+              <Link to="/services" className="py-2 text-background/80 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Services</Link>
               <Link to="/ai-curator" className="py-2 text-background/80 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>AI Curator</Link>
               <Link to="/art-quiz" className="py-2 text-background/80 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Art Quiz</Link>
               <Link to="/artists" className="py-2 text-background/80 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Artists</Link>

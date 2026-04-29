@@ -28,6 +28,8 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import DeliveryTerms from "./pages/DeliveryTerms";
 import Liked from "./pages/Liked";
+import Services from "./pages/Services";
+import ServiceDetail from "./pages/ServiceDetail";
 import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
@@ -69,6 +71,8 @@ const AnimatedRoutes = () => {
         <Route path="/terms" element={<Terms />} />
         <Route path="/delivery-terms" element={<DeliveryTerms />} />
         <Route path="/liked" element={<Liked />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/service/:id" element={<ServiceDetail />} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLogin />} />

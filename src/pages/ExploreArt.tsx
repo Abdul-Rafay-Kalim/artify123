@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Heart, ShoppingCart, SlidersHorizontal, X } from "lucide-react";
+import { Heart, ShoppingCart, SlidersHorizontal, X, Sparkles } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,8 @@ interface UnifiedArtwork {
   description: string;
   isListed?: boolean;
   createdAt?: string;
+  isFeatured?: boolean;
+  featuredUntil?: string | null;
 }
 
 const blockedArtistNames = new Set(["abc"]);
@@ -72,6 +74,11 @@ const ExploreArt = () => {
             description: a.description || "",
             isListed: true,
             createdAt: a.created_at || undefined,
+            isFeatured:
+              !!a.is_featured &&
+              !!a.featured_until &&
+              new Date(a.featured_until) > new Date(),
+            featuredUntil: a.featured_until,
           }))
         );
       }
@@ -120,6 +127,9 @@ const ExploreArt = () => {
     else if (sortBy === "price-high") result.sort((a, b) => b.price - a.price);
     else {
       result.sort((a, b) => {
+        const af = a.isFeatured ? 1 : 0;
+        const bf = b.isFeatured ? 1 : 0;
+        if (af !== bf) return bf - af;
         const aTime = a.createdAt ? new Date(a.createdAt).getTime() : new Date(a.year, 0, 1).getTime();
         const bTime = b.createdAt ? new Date(b.createdAt).getTime() : new Date(b.year, 0, 1).getTime();
         return bTime - aTime;
@@ -255,6 +265,11 @@ const ExploreArt = () => {
                             <img src={art.image} alt={art.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-muted-foreground">No Image</div>
+                          )}
+                          {art.isFeatured && (
+                            <div className="absolute right-3 bottom-3 z-10 inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground shadow-md">
+                              <Sparkles className="w-3 h-3" /> Featured
+                            </div>
                           )}
                           <button
                             type="button"

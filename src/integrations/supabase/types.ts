@@ -56,9 +56,11 @@ export type Database = {
           created_at: string
           description: string | null
           dimensions: string | null
+          featured_until: string | null
           genre: string | null
           id: string
           image_url: string | null
+          is_featured: boolean
           medium: string | null
           price: number
           seller_id: string
@@ -71,9 +73,11 @@ export type Database = {
           created_at?: string
           description?: string | null
           dimensions?: string | null
+          featured_until?: string | null
           genre?: string | null
           id?: string
           image_url?: string | null
+          is_featured?: boolean
           medium?: string | null
           price: number
           seller_id: string
@@ -86,9 +90,11 @@ export type Database = {
           created_at?: string
           description?: string | null
           dimensions?: string | null
+          featured_until?: string | null
           genre?: string | null
           id?: string
           image_url?: string | null
+          is_featured?: boolean
           medium?: string | null
           price?: number
           seller_id?: string
@@ -143,6 +149,54 @@ export type Database = {
           state?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          artist_name: string
+          category: string | null
+          created_at: string
+          delivery_days: number
+          description: string | null
+          featured_until: string | null
+          id: string
+          image_url: string | null
+          is_featured: boolean
+          price: number
+          seller_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          artist_name: string
+          category?: string | null
+          created_at?: string
+          delivery_days?: number
+          description?: string | null
+          featured_until?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          price: number
+          seller_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          artist_name?: string
+          category?: string | null
+          created_at?: string
+          delivery_days?: number
+          description?: string | null
+          featured_until?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          price?: number
+          seller_id?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }

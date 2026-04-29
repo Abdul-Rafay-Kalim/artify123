@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Upload, Sparkles, Loader2, Trash2, Palette, Info, Pencil } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Upload, Sparkles, Loader2, Trash2, Palette, Info, Pencil, Briefcase, Clock } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import BoostFeaturedDialog from "@/components/BoostFeaturedDialog";
 
 interface ArtistProfileData {
   id: string;
@@ -34,7 +35,32 @@ interface ListedArtwork {
   description: string | null;
   year: number | null;
   dimensions: string | null;
+  is_featured?: boolean;
+  featured_until?: string | null;
 }
+
+interface ListedService {
+  id: string;
+  seller_id: string;
+  title: string;
+  description: string | null;
+  category: string | null;
+  price: number;
+  delivery_days: number;
+  image_url: string | null;
+  is_featured: boolean;
+  featured_until: string | null;
+}
+
+const SERVICE_CATEGORIES = [
+  "Logo Design",
+  "Portraits",
+  "Wall Art",
+  "UI/UX Design",
+  "Illustration",
+  "Calligraphy",
+  "Other",
+];
 
 type ListingArtistMode = "self" | "other";
 
@@ -83,6 +109,19 @@ const SellArt = () => {
   // My listings
   const [myListings, setMyListings] = useState<ListedArtwork[]>([]);
 
+  // Services state
+  const [searchParams] = useSearchParams();
+  const [serviceTitle, setServiceTitle] = useState("");
+  const [serviceDescription, setServiceDescription] = useState("");
+  const [serviceCategory, setServiceCategory] = useState("");
+  const [servicePrice, setServicePrice] = useState("");
+  const [serviceDeliveryDays, setServiceDeliveryDays] = useState("7");
+  const [serviceImageUrl, setServiceImageUrl] = useState("");
+  const [submittingService, setSubmittingService] = useState(false);
+  const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
+  const [myServices, setMyServices] = useState<ListedService[]>([]);
+  const showServiceFormHint = searchParams.get("tab") === "service";
+
   useEffect(() => {
     if (!authLoading && !user) {
       navigate("/login");
@@ -93,8 +132,20 @@ const SellArt = () => {
     if (user) {
       fetchArtistProfile();
       fetchMyListings();
+      fetchMyServices();
     }
   }, [user]);
+
+  // Scroll to service form when ?tab=service is in URL
+  useEffect(() => {
+    if (showServiceFormHint) {
+      setTimeout(() => {
+        document
+          .getElementById("service-form")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 300);
+    }
+  }, [showServiceFormHint]);
 
   // Ensure user metadata (role) is fresh — refresh session once on mount
   useEffect(() => {
@@ -450,6 +501,135 @@ const SellArt = () => {
     }
   };
 
+  // ======== Services handlers ========
+
+  const fetchMyServices = async () => {
+    if (!user) return;
+    const { data } = await (supabase as any)
+      .from("services")
+      .select("*")
+      .eq("seller_id", user.id)
+      .order("created_at", { ascending: false });
+    setMyServices((data as ListedService[]) || []);
+  };
+
+  const resetServiceForm = () => {
+    setServiceTitle("");
+    setServiceDescription("");
+    setServiceCategory("");
+    setServicePrice("");
+    setServiceDeliveryDays("7");
+    setServiceImageUrl("");
+    setEditingServiceId(null);
+  };
+
+  const handleServiceImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const dataUrl = await fileToDataUrl(file);
+      setServiceImageUrl(dataUrl);
+    } catch (err: any) {
+      toast({
+        title: "Failed to load image",
+        description: err.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const startEditingService = (s: ListedService) => {
+    setEditingServiceId(s.id);
+    setServiceTitle(s.title);
+    setServiceDescription(s.description || "");
+    setServiceCategory(s.category || "");
+    setServicePrice(String(s.price));
+    setServiceDeliveryDays(String(s.delivery_days));
+    setServiceImageUrl(s.image_url || "");
+    document
+      .getElementById("service-form")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const submitService = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !isSeller) {
+      toast({
+        title: "Seller account required",
+        description: "Switch to a seller account to offer services.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!serviceTitle.trim() || !servicePrice || !serviceDeliveryDays) {
+      toast({
+        title: "Missing fields",
+        description: "Title, price and delivery time are required.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSubmittingService(true);
+    try {
+      const payload = {
+        seller_id: user.id,
+        artist_name:
+          artistName ||
+          [user.user_metadata?.first_name, user.user_metadata?.last_name]
+            .filter(Boolean)
+            .join(" ") ||
+          "Artist",
+        title: serviceTitle.trim(),
+        description: serviceDescription || null,
+        category: serviceCategory || null,
+        price: parseFloat(servicePrice),
+        delivery_days: parseInt(serviceDeliveryDays, 10) || 7,
+        image_url: serviceImageUrl || null,
+      };
+
+      const query = editingServiceId
+        ? (supabase as any)
+            .from("services")
+            .update(payload)
+            .eq("id", editingServiceId)
+        : (supabase as any).from("services").insert(payload);
+
+      const { error } = await query;
+      if (error) throw error;
+
+      toast({
+        title: editingServiceId ? "Service updated!" : "Service published!",
+        description: editingServiceId
+          ? "Your changes are now live."
+          : "It's now visible on the Services page.",
+      });
+      resetServiceForm();
+      await fetchMyServices();
+    } catch (err: any) {
+      toast({
+        title: "Error saving service",
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setSubmittingService(false);
+    }
+  };
+
+  const deleteService = async (id: string) => {
+    const { error } = await (supabase as any)
+      .from("services")
+      .delete()
+      .eq("id", id);
+    if (!error) {
+      setMyServices((prev) => prev.filter((s) => s.id !== id));
+      toast({ title: "Service removed" });
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -734,31 +914,229 @@ const SellArt = () => {
             <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0.5s" }}>
               <h2 className="text-2xl font-serif font-bold text-foreground mb-6">My Listings</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {myListings.map((art) => (
-                  <div key={art.id} className="border border-border rounded-xl p-4 bg-card">
-                    {art.image_url && (
-                      <div className="aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-secondary">
-                        <img src={art.image_url} alt={art.title} className="w-full h-full object-cover" />
+                {myListings.map((art) => {
+                  const isFeatured =
+                    art.is_featured &&
+                    art.featured_until &&
+                    new Date(art.featured_until) > new Date();
+                  return (
+                    <div key={art.id} className="relative border border-border rounded-xl p-4 bg-card">
+                      {art.image_url && (
+                        <div className="relative aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-secondary">
+                          <img src={art.image_url} alt={art.title} className="w-full h-full object-cover" />
+                          {isFeatured && (
+                            <div className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground shadow">
+                              <Sparkles className="w-3 h-3" /> Featured
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <h3 className="font-serif font-semibold text-foreground truncate">{art.title}</h3>
+                      <p className="text-sm text-muted-foreground">{art.artist_name}</p>
+                      {isFeatured && (
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
+                          Featured until {new Date(art.featured_until!).toLocaleDateString()}
+                        </p>
+                      )}
+                      <div className="mt-3 flex items-center justify-between gap-2">
+                        <span className="font-medium text-foreground">PKR {Number(art.price).toLocaleString()}</span>
+                        <div className="flex items-center gap-1">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => startEditingArtwork(art)} aria-label="Edit artwork">
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteArtwork(art.id)} aria-label="Delete artwork">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
-                    )}
-                    <h3 className="font-serif font-semibold text-foreground truncate">{art.title}</h3>
-                    <p className="text-sm text-muted-foreground">{art.artist_name}</p>
-                    <div className="mt-3 flex items-center justify-between gap-2">
-                      <span className="font-medium text-foreground">PKR {Number(art.price).toLocaleString()}</span>
-                      <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => startEditingArtwork(art)} aria-label="Edit artwork">
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteArtwork(art.id)} aria-label="Delete artwork">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                      <div className="mt-3">
+                        <BoostFeaturedDialog
+                          recordId={art.id}
+                          table="listed_artworks"
+                          itemTitle={art.title}
+                          isAlreadyFeatured={art.is_featured}
+                          featuredUntil={art.featured_until || null}
+                          onBoosted={fetchMyListings}
+                          trigger={
+                            <Button size="sm" variant={isFeatured ? "outline" : "default"} className="w-full gap-1.5">
+                              <Sparkles className="w-3.5 h-3.5" />
+                              {isFeatured ? "Extend Boost" : "Boost to Featured"}
+                            </Button>
+                          }
+                        />
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
+
+          {/* ============ Services Section ============ */}
+          <div id="service-form" className="mt-16">
+            <Separator className="mb-10" />
+            <Card className="opacity-0 animate-fade-in" style={{ animationDelay: "0.55s" }}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-serif">
+                  <Briefcase className="w-5 h-5" />
+                  {editingServiceId ? "Edit Service" : "Offer a Service"}
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Sell custom art services like portraits, logos or commissions.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={submitService} className="space-y-5">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="svc-title">Title *</Label>
+                      <Input
+                        id="svc-title"
+                        value={serviceTitle}
+                        onChange={(e) => setServiceTitle(e.target.value)}
+                        placeholder="I will paint a custom watercolor portrait"
+                        disabled={!isSeller}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="svc-cat">Category</Label>
+                      <select
+                        id="svc-cat"
+                        value={serviceCategory}
+                        onChange={(e) => setServiceCategory(e.target.value)}
+                        disabled={!isSeller}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                      >
+                        <option value="">Select category</option>
+                        {SERVICE_CATEGORIES.map((c) => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="svc-delivery">Delivery (days) *</Label>
+                      <Input
+                        id="svc-delivery"
+                        type="number"
+                        min="1"
+                        value={serviceDeliveryDays}
+                        onChange={(e) => setServiceDeliveryDays(e.target.value)}
+                        disabled={!isSeller}
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="svc-price">Starting price (PKR) *</Label>
+                      <Input
+                        id="svc-price"
+                        type="number"
+                        min="0"
+                        value={servicePrice}
+                        onChange={(e) => setServicePrice(e.target.value)}
+                        placeholder="3500"
+                        disabled={!isSeller}
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="svc-desc">Description</Label>
+                      <Textarea
+                        id="svc-desc"
+                        value={serviceDescription}
+                        onChange={(e) => setServiceDescription(e.target.value)}
+                        rows={4}
+                        placeholder="What's included, how it works, what the buyer needs to provide..."
+                        disabled={!isSeller}
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="svc-img">Cover image</Label>
+                      <Input
+                        id="svc-img"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleServiceImageUpload}
+                        disabled={!isSeller}
+                      />
+                      {serviceImageUrl && (
+                        <div className="aspect-[4/3] w-full max-w-xs rounded-lg overflow-hidden bg-secondary mt-2">
+                          <img src={serviceImageUrl} alt="Cover" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button type="submit" disabled={submittingService || !isSeller}>
+                      {submittingService && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                      {editingServiceId ? "Save Changes" : "Publish Service"}
+                    </Button>
+                    {editingServiceId && (
+                      <Button type="button" variant="outline" onClick={resetServiceForm} disabled={submittingService}>
+                        Cancel Editing
+                      </Button>
+                    )}
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+
+            {myServices.length > 0 && (
+              <div className="mt-10 opacity-0 animate-fade-in" style={{ animationDelay: "0.6s" }}>
+                <h2 className="text-2xl font-serif font-bold text-foreground mb-6">My Services</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {myServices.map((s) => {
+                    const isFeatured =
+                      s.is_featured &&
+                      s.featured_until &&
+                      new Date(s.featured_until) > new Date();
+                    return (
+                      <div key={s.id} className="border border-border rounded-xl p-4 bg-card">
+                        {s.image_url && (
+                          <div className="relative aspect-[4/3] rounded-lg overflow-hidden mb-3 bg-secondary">
+                            <img src={s.image_url} alt={s.title} className="w-full h-full object-cover" />
+                            {isFeatured && (
+                              <div className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground shadow">
+                                <Sparkles className="w-3 h-3" /> Featured
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        <h3 className="font-serif font-semibold text-foreground line-clamp-2">{s.title}</h3>
+                        <p className="text-xs text-muted-foreground mt-0.5 inline-flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> {s.delivery_days}d · {s.category || "Service"}
+                        </p>
+                        <div className="mt-3 flex items-center justify-between gap-2">
+                          <span className="font-medium text-foreground">PKR {Number(s.price).toLocaleString()}</span>
+                          <div className="flex items-center gap-1">
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => startEditingService(s)} aria-label="Edit service">
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteService(s.id)} aria-label="Delete service">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="mt-3">
+                          <BoostFeaturedDialog
+                            recordId={s.id}
+                            table="services"
+                            itemTitle={s.title}
+                            isAlreadyFeatured={s.is_featured}
+                            featuredUntil={s.featured_until}
+                            onBoosted={fetchMyServices}
+                            trigger={
+                              <Button size="sm" variant={isFeatured ? "outline" : "default"} className="w-full gap-1.5">
+                                <Sparkles className="w-3.5 h-3.5" />
+                                {isFeatured ? "Extend Boost" : "Boost to Featured"}
+                              </Button>
+                            }
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </main>
       <Footer />

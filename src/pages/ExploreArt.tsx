@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Heart, ShoppingCart, SlidersHorizontal, X } from "lucide-react";
+import { Heart, ShoppingCart, SlidersHorizontal, X, Sparkles } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,8 @@ interface UnifiedArtwork {
   description: string;
   isListed?: boolean;
   createdAt?: string;
+  isFeatured?: boolean;
+  featuredUntil?: string | null;
 }
 
 const blockedArtistNames = new Set(["abc"]);
@@ -72,6 +74,11 @@ const ExploreArt = () => {
             description: a.description || "",
             isListed: true,
             createdAt: a.created_at || undefined,
+            isFeatured:
+              !!a.is_featured &&
+              !!a.featured_until &&
+              new Date(a.featured_until) > new Date(),
+            featuredUntil: a.featured_until,
           }))
         );
       }

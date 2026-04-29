@@ -398,13 +398,21 @@ const AdminDashboard = () => {
               { id: "deals", label: "Deals & Discounts", icon: Tag },
               { id: "images", label: "Hero Images", icon: Image },
               { id: "payments", label: "Payments", icon: Tag },
+              { id: "featured", label: "Featured Listings", icon: Sparkles },
               { id: "settings", label: "Settings", icon: Settings },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() =>
                   setActiveTab(
-                    tab.id as "art" | "news" | "deals" | "images" | "payments" | "settings"
+                    tab.id as
+                      | "art"
+                      | "news"
+                      | "deals"
+                      | "images"
+                      | "payments"
+                      | "featured"
+                      | "settings"
                   )
                 }
                 className={`px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${

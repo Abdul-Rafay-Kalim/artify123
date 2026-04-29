@@ -66,6 +66,68 @@ const AdminDashboard = () => {
   const [artList, setArtList] = useState<Art[]>([]);
   const [newArt, setNewArt] = useState({ title: "", artist: "", price: "" });
 
+  // Featured management
+  const [featuredListings, setFeaturedListings] = useState<any[]>([]);
+  const [featuredServices, setFeaturedServices] = useState<any[]>([]);
+
+  const fetchFeaturedData = async () => {
+    const [{ data: a }, { data: s }] = await Promise.all([
+      (supabase as any)
+        .from("listed_artworks")
+        .select("id,title,artist_name,price,image_url,is_featured,featured_until,created_at")
+        .order("is_featured", { ascending: false })
+        .order("created_at", { ascending: false }),
+      (supabase as any)
+        .from("services")
+        .select("id,title,artist_name,price,image_url,is_featured,featured_until,delivery_days,created_at")
+        .order("is_featured", { ascending: false })
+        .order("created_at", { ascending: false }),
+    ]);
+    setFeaturedListings((a as any[]) || []);
+    setFeaturedServices((s as any[]) || []);
+  };
+
+  useEffect(() => {
+    if (activeTab === "featured") fetchFeaturedData();
+  }, [activeTab]);
+
+  const toggleFeatured = async (
+    table: "listed_artworks" | "services",
+    row: any
+  ) => {
+    const isCurrentlyActive =
+      row.is_featured &&
+      row.featured_until &&
+      new Date(row.featured_until) > new Date();
+
+    const update = isCurrentlyActive
+      ? { is_featured: false, featured_until: null }
+      : {
+          is_featured: true,
+          featured_until: new Date(
+            Date.now() + 7 * 24 * 60 * 60 * 1000
+          ).toISOString(),
+        };
+
+    const { error } = await (supabase as any)
+      .from(table)
+      .update(update)
+      .eq("id", row.id);
+
+    if (error) {
+      toast({
+        title: "Update failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+    toast({
+      title: isCurrentlyActive ? "Featured removed" : "Marked as featured (7 days)",
+    });
+    fetchFeaturedData();
+  };
+
   // News management
   const [newsList, setNewsList] = useState<News[]>([]);
   const [newNews, setNewNews] = useState({ title: "", content: "" });

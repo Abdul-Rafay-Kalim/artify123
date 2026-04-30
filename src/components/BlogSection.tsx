@@ -77,7 +77,7 @@ const BlogSection = () => {
     <section className="section-space bg-background" ref={ref}>
       <div className="container mx-auto px-4 md:px-8">
         <div
-          className={`relative overflow-hidden rounded-[2.6rem] border border-white/10 bg-[#050607] p-6 text-white md:p-10 transition-all duration-700 ${
+          className={`relative overflow-hidden rounded-2xl md:rounded-[2.6rem] border border-white/10 bg-[#050607] p-3 md:p-10 text-white transition-all duration-700 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           }`}
         >
@@ -92,16 +92,16 @@ const BlogSection = () => {
           />
 
           <div className="relative z-10">
-            <header className="mb-8 text-center">
-              <h2 className="font-serif text-4xl leading-none tracking-tight text-white md:text-6xl">From the Studio & Beyond</h2>
-              <p className="mt-3 text-sm text-white/65 md:text-base">
+            <header className="mb-3 md:mb-8 text-center">
+              <h2 className="font-serif text-xl leading-none tracking-tight text-white md:text-6xl">From the Studio & Beyond</h2>
+              <p className="mt-1 md:mt-3 text-xs text-white/65 md:text-base">
                 Stories, insights, and perspectives that explore how art is made, collected, and lived with.
               </p>
             </header>
 
-            <div className="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)_290px]">
+            <div className="grid gap-3 md:gap-4 lg:grid-cols-[240px_minmax(0,1fr)_290px]">
               {/* Left stack */}
-              <aside className="space-y-3">
+              <aside className="hidden lg:block space-y-3">
                 {leftVisibleStories.map((card) => (
                   <article key={card.title} className="rounded-2xl border border-white/10 bg-black/55 p-2">
                     <div className="aspect-[4/3] overflow-hidden rounded-xl">
@@ -114,18 +114,18 @@ const BlogSection = () => {
               </aside>
 
               {/* Main feature */}
-              <article key={`feature-${topStoryIndex}`} className="animate-news-feature rounded-[1.9rem] border border-white/10 bg-black/45 p-3">
-                <div className="overflow-hidden rounded-[1.5rem]">
-                  <img src={featuredStory.image} alt={featuredStory.title} className="h-full max-h-[540px] w-full object-cover" />
+              <article key={`feature-${topStoryIndex}`} className="animate-news-feature rounded-xl md:rounded-[1.9rem] border border-white/10 bg-black/45 p-2 md:p-3">
+                <div className="overflow-hidden rounded-lg md:rounded-[1.5rem]">
+                  <img src={featuredStory.image} alt={featuredStory.title} className="h-32 md:h-auto md:max-h-[540px] w-full object-cover" />
                 </div>
-                <h3 className="mt-3 font-serif text-[2rem] leading-[1.04] text-white md:text-[2.4rem]">
+                <h3 className="mt-2 md:mt-3 font-serif text-base md:text-[2.4rem] leading-tight md:leading-[1.04] text-white">
                   {featuredStory.title}
                 </h3>
-                <p className="mt-1 text-sm text-white/55">{featuredStory.note}</p>
+                <p className="mt-1 text-[10px] md:text-sm text-white/55">{featuredStory.note}</p>
               </article>
 
               {/* Right list */}
-              <aside className="rounded-2xl border border-white/10 bg-black/50 p-4">
+              <aside className="hidden lg:block rounded-2xl border border-white/10 bg-black/50 p-4">
                 <div className="grid grid-cols-[1fr_38px] gap-4">
                   <div key={`right-${topStoryIndex}`} className="space-y-4">
                     {visibleRightStories.map((story, idx) => (

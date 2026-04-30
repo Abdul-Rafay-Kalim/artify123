@@ -18,7 +18,7 @@ const StartGuide = () => {
 
   return (
     <section className="section-space relative overflow-hidden bg-[#ececec]" ref={ref}>
-      <div className="container mx-auto px-4 md:px-8 relative z-10 min-h-[620px]">
+      <div className="container mx-auto px-4 md:px-8 relative z-10 md:min-h-[620px]">
         <div className="pointer-events-none absolute right-0 top-[12%] hidden md:grid grid-cols-8 gap-3 opacity-45">
           {Array.from({ length: 32 }).map((_, idx) => (
             <span key={`rt-${idx}`} className="h-1.5 w-1.5 rounded-full bg-[#c6c6c6]" />
@@ -54,12 +54,12 @@ const StartGuide = () => {
         ))}
 
         {/* Center Content */}
-        <div className="relative z-20 mx-auto flex min-h-[620px] max-w-2xl flex-col items-center justify-center text-center">
-          <div className="mb-8 grid w-full grid-cols-3 gap-3 md:hidden">
+        <div className="relative z-20 mx-auto flex md:min-h-[620px] max-w-2xl flex-col items-center justify-center text-center">
+          <div className="mb-3 grid w-full grid-cols-3 gap-2 md:hidden">
             {artworks.slice(0, 3).map((art, i) => (
               <div
                 key={`mobile-${i}`}
-                className={`aspect-square overflow-hidden rounded-xl transition-all duration-700 ${
+                className={`aspect-square overflow-hidden rounded-lg transition-all duration-700 ${
                   isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 }`}
                 style={{ transitionDelay: isVisible ? `${120 + i * 80}ms` : "0ms" }}
@@ -77,7 +77,7 @@ const StartGuide = () => {
           </div>
 
           <h2
-            className={`text-4xl md:text-6xl font-serif font-bold text-foreground mb-4 transition-all duration-700 ${
+            className={`text-2xl md:text-6xl font-serif font-bold text-foreground mb-2 md:mb-4 transition-all duration-700 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
             style={{ transitionDelay: isVisible ? "200ms" : "0ms" }}
@@ -85,7 +85,7 @@ const StartGuide = () => {
             Not Sure Where to Start?
           </h2>
           <p
-            className={`text-base md:text-lg text-muted-foreground mb-8 transition-all duration-700 ${
+            className={`text-xs md:text-lg text-muted-foreground mb-4 md:mb-8 transition-all duration-700 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
             style={{ transitionDelay: isVisible ? "300ms" : "0ms" }}
@@ -94,7 +94,7 @@ const StartGuide = () => {
           </p>
           <a
             href="/art-quiz"
-            className={`inline-block bg-black text-white px-8 py-3 rounded-full font-medium hover:bg-gray-800 transition-all duration-700 ${
+            className={`inline-block bg-black text-white text-sm md:text-base px-6 md:px-8 py-2.5 md:py-3 rounded-full font-medium hover:bg-gray-800 transition-all duration-700 ${
               isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
             }`}
             style={{ transitionDelay: isVisible ? "400ms" : "0ms" }}

@@ -114,12 +114,12 @@ const CuratorPicks = () => {
     <section className="section-space" ref={ref}>
       <div className="container mx-auto px-4 md:px-8">
         <h2
-          className={`text-3xl md:text-5xl font-serif font-bold mb-4 text-center text-foreground transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+          className={`text-xl md:text-5xl font-serif font-bold mb-2 md:mb-4 text-center text-foreground transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
         >
           AI + Curator Picks...
         </h2>
         <p
-          className={`mx-auto mb-12 max-w-lg text-center text-muted-foreground transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+          className={`mx-auto mb-4 md:mb-12 max-w-lg text-center text-xs md:text-base text-muted-foreground transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
           style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}
         >
           A personalized selection of art curated just for you, blending algorithmic intelligence with expert taste.

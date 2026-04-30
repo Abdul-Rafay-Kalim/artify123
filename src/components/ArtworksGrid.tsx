@@ -138,20 +138,20 @@ const ArtworksGrid = () => {
       <div className="container mx-auto px-4 md:px-8">
         {/* Header */}
         <div
-          className={`mb-16 transition-all duration-700 ${
+          className={`mb-4 md:mb-16 transition-all duration-700 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           } text-center`}
         >
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-2">
+          <h2 className="text-xl md:text-5xl font-serif font-bold text-foreground mb-1 md:mb-2">
             Artworks Available Now
           </h2>
-          <p className="text-base text-muted-foreground">
+          <p className="text-xs md:text-base text-muted-foreground">
             Original works, ready to be lived with.
           </p>
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-10 mb-4 md:mb-12">
           {latestArtworks.map((artwork, i) => (
             (() => {
               const status = getArtworkStatus(artwork.id, 1);
@@ -161,7 +161,7 @@ const ArtworksGrid = () => {
               return (
             <div
               key={artwork.id}
-              className={`group transition-all duration-700 ${
+              className={`group transition-all duration-700 ${i > 0 ? "hidden md:block" : ""} ${
                 isVisible
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-8"

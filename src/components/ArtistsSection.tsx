@@ -87,12 +87,12 @@ const ArtistsSection = () => {
     <section className="section-space" ref={ref}>
       <div className="container mx-auto px-4 md:px-8">
         <h2
-          className={`text-3xl md:text-5xl font-serif font-bold text-center mb-4 text-foreground transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+          className={`text-xl md:text-5xl font-serif font-bold text-center mb-2 md:mb-4 text-foreground transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
         >
           The Artists Behind the Work
         </h2>
         <p
-          className={`text-center text-muted-foreground mb-12 max-w-lg mx-auto transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+          className={`text-center text-xs md:text-base text-muted-foreground mb-4 md:mb-12 max-w-lg mx-auto transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
           style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}
         >
           Meet the creators whose vision and craft bring each piece to life.
@@ -132,7 +132,7 @@ const ArtistsSection = () => {
           <CarouselNext className="-right-4 md:-right-6 h-11 w-11 rounded-full border border-background/30 bg-foreground/40 text-background backdrop-blur-2xl shadow-sm transition-colors duration-200 hover:bg-black hover:text-white disabled:opacity-40" />
         </Carousel>
         <div
-          className={`flex justify-center mt-12 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+          className={`flex justify-center mt-4 md:mt-12 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
           style={{ transitionDelay: isVisible ? "600ms" : "0ms" }}
         >
           <Link

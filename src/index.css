@@ -226,9 +226,15 @@
   }
 
   .section-space {
-    padding-top: clamp(5rem, 8vw, 7rem);
-    padding-bottom: clamp(5rem, 8vw, 7rem);
-    min-height: clamp(620px, 78vh, 840px);
+    padding-top: clamp(2.25rem, 8vw, 7rem);
+    padding-bottom: clamp(2.25rem, 8vw, 7rem);
+    min-height: 0;
+  }
+
+  @media (min-width: 768px) {
+    .section-space {
+      min-height: clamp(620px, 78vh, 840px);
+    }
   }
 
   .section-dark {

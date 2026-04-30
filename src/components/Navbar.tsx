@@ -185,29 +185,30 @@ const Navbar = () => {
           )}
 
           {mobileOpen && (
-            <nav className="md:hidden border-t border-background/10 px-6 py-4 flex flex-col gap-2 text-sm font-medium animate-fade-in">
-              <Link to="/" className="py-2 text-background/80 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Home</Link>
-              <Link to="/explore" className="py-2 text-background/80 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Explore</Link>
-              <Link to="/services" className="py-2 text-background/80 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Services</Link>
-              <Link to="/ai-curator" className="py-2 text-background/80 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>AI Curator</Link>
-              <Link to="/art-quiz" className="py-2 text-background/80 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Art Quiz</Link>
-              <Link to="/artists" className="py-2 text-background/80 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Artists</Link>
-              <Link to="/sell" className="py-2 text-background/80 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Sell Art</Link>
-              <Link to="/contact" className="py-2 text-background/80 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Contact</Link>
+            <nav className="md:hidden absolute right-3 top-[calc(100%+8px)] z-50 w-44 rounded-lg bg-black/95 backdrop-blur-xl shadow-xl ring-1 ring-background/10 py-1.5 flex flex-col text-[13px] font-medium animate-fade-in">
+              <Link to="/" className="px-3 py-1.5 text-background/85 hover:bg-background/10 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Home</Link>
+              <Link to="/explore" className="px-3 py-1.5 text-background/85 hover:bg-background/10 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Explore</Link>
+              <Link to="/services" className="px-3 py-1.5 text-background/85 hover:bg-background/10 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Services</Link>
+              <Link to="/ai-curator" className="px-3 py-1.5 text-background/85 hover:bg-background/10 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>AI Curator</Link>
+              <Link to="/art-quiz" className="px-3 py-1.5 text-background/85 hover:bg-background/10 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Art Quiz</Link>
+              <Link to="/artists" className="px-3 py-1.5 text-background/85 hover:bg-background/10 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Artists</Link>
+              <Link to="/sell" className="px-3 py-1.5 text-background/85 hover:bg-background/10 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Sell Art</Link>
+              <Link to="/contact" className="px-3 py-1.5 text-background/85 hover:bg-background/10 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>Contact</Link>
+              <div className="my-1 mx-2 h-px bg-background/15" />
               {!loading && user ? (
                 <button
                   onClick={() => {
                     signOut();
                     setMobileOpen(false);
                   }}
-                  className="mt-2 flex items-center justify-center gap-2 bg-background text-foreground px-4 py-2 rounded-full text-sm font-medium"
+                  className="flex items-center gap-2 px-3 py-1.5 text-background/85 hover:bg-background/10 hover:text-background transition-colors text-left"
                 >
-                  <LogOut className="w-4 h-4" />
-                  Log out ({profileName})
+                  <LogOut className="w-3.5 h-3.5" />
+                  Log out
                 </button>
               ) : (
-                <Link to="/login" className="mt-2 flex items-center justify-center gap-2 bg-background text-foreground px-4 py-2 rounded-full text-sm font-medium" onClick={() => setMobileOpen(false)}>
-                  <User className="w-4 h-4" />
+                <Link to="/login" className="flex items-center gap-2 px-3 py-1.5 text-background/85 hover:bg-background/10 hover:text-background transition-colors" onClick={() => setMobileOpen(false)}>
+                  <User className="w-3.5 h-3.5" />
                   Sign In
                 </Link>
               )}

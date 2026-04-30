@@ -161,7 +161,7 @@ const ArtworksGrid = () => {
               return (
             <div
               key={artwork.id}
-              className={`group transition-all duration-700 ${
+              className={`group transition-all duration-700 ${i > 0 ? "hidden md:block" : ""} ${
                 isVisible
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-8"

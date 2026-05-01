@@ -44,7 +44,7 @@ const Navbar = () => {
         .from("profiles")
         .select("first_name, last_name")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
       const profile = data as { first_name: string | null; last_name: string | null } | null;
       if (profile) {

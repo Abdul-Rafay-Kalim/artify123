@@ -47,7 +47,7 @@ const ExploreArt = () => {
   const { addToCart, removeFromCart, isInCart } = useCart();
   const { ensureArtworkRecord, getArtworkStatus, getAvailableQuantity, isPurchasable } = useInventory();
   const { isLiked, toggleLike } = useLikedArtworks();
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000000]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedMediums, setSelectedMediums] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>("newest");
@@ -138,10 +138,10 @@ const ExploreArt = () => {
     return result;
   }, [searchQuery, priceRange, selectedGenres, selectedMediums, sortBy, allArtworks]);
 
-  const activeFilterCount = selectedGenres.length + selectedMediums.length + (priceRange[0] > 0 || priceRange[1] < 10000 ? 1 : 0);
+  const activeFilterCount = selectedGenres.length + selectedMediums.length + (priceRange[0] > 0 || priceRange[1] < 10000000 ? 1 : 0);
 
   const clearFilters = () => {
-    setPriceRange([0, 10000]);
+    setPriceRange([0, 10000000]);
     setSelectedGenres([]);
     setSelectedMediums([]);
   };
@@ -150,7 +150,7 @@ const ExploreArt = () => {
     <div className="space-y-8">
       <div>
         <h3 className="font-serif font-semibold text-foreground mb-4">Price Range</h3>
-        <Slider min={0} max={10000} step={50} value={priceRange} onValueChange={(v) => setPriceRange(v as [number, number])} />
+        <Slider min={0} max={10000000} step={1000} value={priceRange} onValueChange={(v) => setPriceRange(v as [number, number])} />
         <div className="flex justify-between mt-2 text-sm text-muted-foreground">
           <span>PKR {priceRange[0].toLocaleString()}</span>
           <span>PKR {priceRange[1].toLocaleString()}</span>
@@ -234,8 +234,8 @@ const ExploreArt = () => {
               {selectedMediums.map((m) => (
                 <Badge key={m} variant="secondary" className="gap-1 cursor-pointer" onClick={() => toggleFilter(m, selectedMediums, setSelectedMediums)}>{m} <X className="w-3 h-3" /></Badge>
               ))}
-              {(priceRange[0] > 0 || priceRange[1] < 10000) && (
-                <Badge variant="secondary" className="gap-1 cursor-pointer" onClick={() => setPriceRange([0, 10000])}>PKR {priceRange[0]}–{priceRange[1]} <X className="w-3 h-3" /></Badge>
+              {(priceRange[0] > 0 || priceRange[1] < 10000000) && (
+                <Badge variant="secondary" className="gap-1 cursor-pointer" onClick={() => setPriceRange([0, 10000000])}>PKR {priceRange[0].toLocaleString()}–{priceRange[1].toLocaleString()} <X className="w-3 h-3" /></Badge>
               )}
             </div>
           )}

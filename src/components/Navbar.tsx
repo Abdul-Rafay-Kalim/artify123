@@ -47,12 +47,18 @@ const Navbar = () => {
         .single();
 
       const profile = data as { first_name: string | null; last_name: string | null } | null;
-      if (profile) {
-        const name = [profile.first_name, profile.last_name].filter(Boolean).join(" ");
-        setProfileName(name || user.email?.split("@")[0] || "User");
-      } else {
-        setProfileName(user.email?.split("@")[0] || "User");
-      }
+      const profileName = profile
+        ? [profile.first_name, profile.last_name].filter(Boolean).join(" ").trim()
+        : "";
+      const meta = (user.user_metadata || {}) as Record<string, any>;
+      const metaName = [meta.first_name, meta.last_name]
+        .filter(Boolean)
+        .join(" ")
+        .trim();
+      const oauthName = (meta.full_name || meta.name || "").trim();
+      setProfileName(
+        profileName || metaName || oauthName || user.email?.split("@")[0] || "User",
+      );
     };
 
     fetchProfile();

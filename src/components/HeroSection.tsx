@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import heroArt from "@/assets/Group2.png";
 
 const HeroSection = () => {
@@ -68,6 +69,31 @@ const HeroSection = () => {
                 src={heroArt}
                 alt="Vibrant contemporary portrait painting"
                 className="block w-full h-auto mix-blend-multiply"
+              />
+              {/* Clickable hotspots aligned to the baked-in thumbnails + arrow */}
+              <Link
+                to="/explore"
+                aria-label="Explore artworks"
+                title="Explore artworks"
+                className="absolute left-[1%] top-[51%] w-[12%] h-[11%] rounded-xl ring-0 hover:ring-2 hover:ring-white/80 transition"
+              />
+              <Link
+                to="/artists"
+                aria-label="Browse artists"
+                title="Browse artists"
+                className="absolute left-[1%] top-[63%] w-[12%] h-[11%] rounded-xl ring-0 hover:ring-2 hover:ring-white/80 transition"
+              />
+              <Link
+                to="/ai-curator"
+                aria-label="AI Curator"
+                title="AI Curator"
+                className="absolute left-[1%] top-[75%] w-[12%] h-[11%] rounded-xl ring-0 hover:ring-2 hover:ring-white/80 transition"
+              />
+              <Link
+                to="/explore"
+                aria-label="Open gallery"
+                title="Open gallery"
+                className="absolute left-[1%] top-[88%] w-[12%] h-[10%] rounded-full ring-0 hover:ring-2 hover:ring-white/80 transition"
               />
             </div>
 

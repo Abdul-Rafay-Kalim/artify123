@@ -213,7 +213,7 @@ const AICurator = () => {
     <div className="flex min-h-screen flex-col bg-[#f7f7f8] text-zinc-900">
       <Navbar />
       <div className="mx-auto flex flex-1 w-full max-w-[1700px]">
-        <aside className="hidden sticky top-0 self-start h-[calc(100vh-64px)] w-[280px] flex-col border-r border-zinc-200 bg-zinc-100/80 p-3 md:flex">
+        <aside className="hidden sticky top-24 self-start h-[calc(100vh-7rem)] w-[280px] flex-col border-r border-zinc-200 bg-zinc-100/80 p-3 md:flex mt-24">
           <Button
             onClick={handleNewChat}
             className="mb-3 h-11 justify-start gap-2 rounded-xl bg-zinc-900 px-4 text-sm text-white hover:bg-zinc-800"

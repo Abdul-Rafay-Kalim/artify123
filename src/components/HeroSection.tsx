@@ -1,16 +1,6 @@
-import { useState } from "react";
 import heroArt from "@/assets/Group2.png";
-import art1 from "@/assets/art-abstract.jpg";
-import art2 from "@/assets/art-watercolor.jpg";
-import art3 from "@/assets/art-rose.jpg";
 
 const HeroSection = () => {
-  const [overlay, setOverlay] = useState<string | null>(null);
-  const swaps = [
-    { id: 1, image: art1, top: "51%" },
-    { id: 2, image: art2, top: "63%" },
-    { id: 3, image: art3, top: "75%" },
-  ];
 
   return (
     <section id="hero-section" className="relative min-h-[100svh] md:min-h-screen flex items-center pt-20 md:pt-20 pb-6 md:pb-0 overflow-hidden bg-[#efefef]">
@@ -78,32 +68,6 @@ const HeroSection = () => {
                 src={heroArt}
                 alt="Vibrant contemporary portrait painting"
                 className="block w-full h-auto mix-blend-multiply"
-              />
-              {/* Overlay: swapped main artwork on top of original portrait area */}
-              {overlay && (
-                <img
-                  src={overlay}
-                  alt="Selected artwork"
-                  className="absolute left-[14%] top-0 w-[86%] h-[88%] object-cover"
-                />
-              )}
-              {/* Clickable thumbnail hotspots — swap main image on click */}
-              {swaps.map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => setOverlay(s.image)}
-                  aria-label={`Show artwork ${s.id}`}
-                  className="absolute left-[1%] w-[12%] h-[11%] rounded-xl ring-0 hover:ring-2 hover:ring-white/80 transition"
-                  style={{ top: s.top }}
-                />
-              ))}
-              {/* Reset button (arrow) — restore original */}
-              <button
-                type="button"
-                onClick={() => setOverlay(null)}
-                aria-label="Reset artwork"
-                className="absolute left-[1%] top-[88%] w-[12%] h-[10%] rounded-full ring-0 hover:ring-2 hover:ring-white/80 transition"
               />
             </div>
 

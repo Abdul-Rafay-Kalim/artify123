@@ -1,0 +1,1 @@
+DELETE FROM public.listed_artworks WHERE id = '740f9944-75c9-4947-9efa-a8ce5efb6d9a';
